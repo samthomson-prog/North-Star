@@ -90,15 +90,17 @@ function renderDashboard(selectedMonth) {
     card.innerHTML = `
   <div class="flex flex-col items-center justify-center text-center w-full">
     <h2 class="text-4xl font-bold text-pink-400 mb-6">${metric.label}</h2>
-    <div class="text-sm">Actual: <span class="font-bold text-white">
-      ${formatNumber(actual, isMoney, useShort)}
-    </span></div>
-    <div class="text-sm">Target: <span class="font-bold text-white">
-      ${formatNumber(target, isMoney, useShort)}
-    </span></div>
-    <div class="text-sm">Variance: <span class="font-bold ${variance < 0 ? 'text-red-400' : 'text-green-400'}">
-      ${formatNumber(variance, isMoney, true)}
-    </span></div>
+    <div class="text-base">Actual: <span class="font-semibold text-white">
+  ${formatNumber(actual, isMoney, useShort)}
+</span></div>
+
+<div class="text-base">Target: <span class="font-semibold text-white">
+  ${formatNumber(target, isMoney, useShort)}
+</span></div>
+
+<div class="text-base">Variance: <span class="font-semibold ${variance < 0 ? 'text-red-400' : 'text-green-400'}">
+  ${formatNumber(variance, isMoney, true)}
+</span></div>
     <div class="w-full bg-gray-700 h-2 rounded-full mt-3">
       <div class="h-2 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
     </div>
