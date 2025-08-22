@@ -8,12 +8,16 @@
 </head>
 <body class="bg-gray-900 text-gray-100 p-7 font-sans min-h-screen">
   <div class="max-w-7xl mx-auto">
-    <h1 class="text-7xl font-bold text-pink-500 mb-9 text-center">NORTH STAR METRICS</h1>
-    <div class="mb-8 flex justify-center w-full">
-  <select id="month" class="w-64 p-3 bg-gray-800 rounded text-white text-lg font-semibold shadow-lg"></select>
-</div>
+    <h1 class="text-5xl font-bold text-pink-500 mb-9 text-center">NORTH STAR METRICS</h1>
 
-<div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <!-- Centered Dropdown -->
+    <div class="mb-8 flex justify-center w-full">
+      <select id="month" class="w-64 p-3 bg-gray-800 rounded text-white text-lg font-semibold shadow-lg"></select>
+    </div>
+
+    <!-- KPI Cards -->
+    <div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
 
   <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRmn96vxxx71rvxX7Q3pnj16KtJeEEOaSLM-mF1kkq1SoWpuBH089S0TnGtRW7imST3QxNDmuXBTnFG/pub?output=csv';
@@ -47,95 +51,85 @@
 
           populateMonths(parsedData);
           monthSelect.addEventListener('change', () => renderDashboard(monthSelect.value));
-          renderDashboard(monthSelect.value);
+          renderDashboard(parsedData[0]?.Month); // auto-select latest
         });
     }
 
     function populateMonths(data) {
-  data.forEach(row => {
-    const opt = document.createElement('option');
-    opt.value = row.Month;
+      data.forEach(row => {
+        const opt = document.createElement('option');
+        opt.value = row.Month;
 
-    // Expecting format "dd/mm/yyyy"
-    const [day, month, year] = row.Month.split('/');
-    const monthIndex = parseInt(month, 10) - 1; // monthIndex = 0 for Jan, 11 for Dec
-    const date = new Date(year, monthIndex, day);
+        const [day, month, year] = row.Month.split('/');
+        const date = new Date(year, month - 1, day);
+        const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-    // Format to "Month YYYY"
-    const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-    opt.textContent = formatted;
-    monthSelect.appendChild(opt);
-  });
-}
-function renderDashboard(selectedMonth) {
-  dashboard.innerHTML = '';
-  const row = parsedData.find(r => r.Month === selectedMonth);
-  if (!row) return;
-
-  metrics.forEach(metric => {
-    const actual = parseFloat(row[`${metric.key}_Actual`] || 0);
-    const target = parseFloat(row[`${metric.key}_Target`] || 0);
-    const variance = actual - target;
-    const percent = target ? (actual / target * 100).toFixed(1) : 0;
-
-    // Determine if we want $ formatting
-    const isMoney = ['Revenue', 'Capital_Raised'].includes(metric.key);
-    const useShort = true;
-
-    const card = document.createElement('div');
-    card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-between h-full";
-
-    card.innerHTML = `
-  <div class="flex flex-col items-center justify-center text-center w-full">
-   <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
-
-<div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
-  ${formatNumber(actual, isMoney, useShort)}
-</span></div>
-
-<div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
-  ${formatNumber(target, isMoney, useShort)}
-</span></div>
-
-<div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
-  ${formatNumber(variance, isMoney, true)}
-</span></div>
-
-<div class="w-full bg-gray-700 h-3 rounded-full mt-4">
-  <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
-</div>
-
-<div class="text-xl mt-4 text-white font-extrabold">${percent}%</div>
-`;
-
-    dashboard.appendChild(card);
-  });
-}
-
-function formatNumber(num, isCurrency = true, useShort = true) {
-  if (isNaN(num)) return '-';
-
-  if (isCurrency) {
-    if (useShort) {
-      if (Math.abs(num) >= 1e6) {
-        return `${num < 0 ? '-' : ''}$${(Math.abs(num) / 1e6).toFixed(2)}M`;
-      } else if (Math.abs(num) >= 1e3) {
-        return `${num < 0 ? '-' : ''}$${Math.round(Math.abs(num) / 1e3)}k`;
-      } else {
-        return `${num < 0 ? '-' : ''}$${Math.round(Math.abs(num))}`;
-      }
-    } else {
-      return `${num < 0 ? '-' : ''}$${Math.abs(num).toLocaleString()}`;
+        opt.textContent = formatted;
+        monthSelect.appendChild(opt);
+      });
     }
-  } else {
-    return `${num < 0 ? '-' : ''}${Math.abs(num).toLocaleString()}`;
-  }
-}
 
+    function renderDashboard(selectedMonth) {
+      dashboard.innerHTML = '';
+      const row = parsedData.find(r => r.Month === selectedMonth);
+      if (!row) return;
 
+      metrics.forEach(metric => {
+        const actual = parseFloat(row[`${metric.key}_Actual`] || 0);
+        const target = parseFloat(row[`${metric.key}_Target`] || 0);
+        const variance = actual - target;
+        const percent = target ? (actual / target * 100).toFixed(1) : 0;
+        const isMoney = ['Revenue', 'Capital_Raised'].includes(metric.key);
+        const useShort = true;
 
+        const card = document.createElement('div');
+        card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-between h-full";
 
+        card.innerHTML = `
+          <div class="flex flex-col items-center justify-center text-center w-full">
+            <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
+
+            <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
+              ${formatNumber(actual, isMoney, useShort)}
+            </span></div>
+
+            <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
+              ${formatNumber(target, isMoney, useShort)}
+            </span></div>
+
+            <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
+              ${formatNumber(variance, isMoney, true)}
+            </span></div>
+
+            <div class="w-full bg-gray-700 h-3 rounded-full mt-4">
+              <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
+            </div>
+
+            <div class="text-xl mt-4 text-white font-extrabold">${percent}%</div>
+          </div>
+        `;
+
+        dashboard.appendChild(card);
+      });
+    }
+
+    function formatNumber(num, isCurrency = true, useShort = true) {
+      if (isNaN(num)) return '-';
+      const abs = Math.abs(num);
+      const sign = num < 0 ? '-' : '';
+
+      if (isCurrency) {
+        if (useShort) {
+          if (abs >= 1e6) return `${sign}$${(abs / 1e6).toFixed(2)}M`;
+          if (abs >= 1e3) return `${sign}$${Math.round(abs / 1e3)}k`;
+          return `${sign}$${Math.round(abs)}`;
+        } else {
+          return `${sign}$${abs.toLocaleString()}`;
+        }
+      } else {
+        return `${sign}${abs.toLocaleString()}`;
+      }
+    }
 
     fetchData();
   </script>
