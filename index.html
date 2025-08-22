@@ -85,24 +85,26 @@ function renderDashboard(selectedMonth) {
     const useShort = true;
 
     const card = document.createElement('div');
-    card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-center items-center";
+    card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-between h-full";
 
     card.innerHTML = `
-      <h2 class="text-xl font-semibold text-pink-400 mb-3">${metric.label}</h2>
-      <div class="text-sm">Actual: <span class="font-bold text-white">
-        ${formatNumber(actual, isMoney, useShort)}
-      </span></div>
-      <div class="text-sm">Target: <span class="font-bold text-white">
-        ${formatNumber(target, isMoney, useShort)}
-      </span></div>
-      <div class="text-sm">Variance: <span class="font-bold ${variance < 0 ? 'text-red-400' : 'text-green-400'}">
-  ${isMoney ? formatNumber(variance, true, true) : variance.toLocaleString()}
-</span></div>
-      <div class="w-full bg-gray-700 h-2 rounded-full mt-3">
-        <div class="h-2 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
-      </div>
-      <div class="text-xs mt-1 text-right">${percent}%</div>
-    `;
+  <div class="flex flex-col items-center justify-center text-center w-full">
+    <h2 class="text-xl font-semibold text-pink-400 mb-3">${metric.label}</h2>
+    <div class="text-sm">Actual: <span class="font-bold text-white">
+      ${formatNumber(actual, isMoney, useShort)}
+    </span></div>
+    <div class="text-sm">Target: <span class="font-bold text-white">
+      ${formatNumber(target, isMoney, useShort)}
+    </span></div>
+    <div class="text-sm">Variance: <span class="font-bold ${variance < 0 ? 'text-red-400' : 'text-green-400'}">
+      ${formatNumber(variance, isMoney, true)}
+    </span></div>
+    <div class="w-full bg-gray-700 h-2 rounded-full mt-3">
+      <div class="h-2 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
+    </div>
+    <div class="text-xs mt-1 text-white mt-1">${percent}%</div>
+  </div>
+`;
 
     dashboard.appendChild(card);
   });
