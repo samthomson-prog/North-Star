@@ -113,16 +113,21 @@ function formatNumber(num, isCurrency = true, useShort = true) {
 
   if (isCurrency) {
     if (useShort) {
-      return num >= 1e6 ? `$${Math.floor(num / 1e6)}M` :
-             num >= 1e3 ? `$${Math.floor(num / 1e3)}k` :
-             `$${Math.floor(num)}`;
+      if (num >= 1e6) {
+        return `$${(num / 1e6).toFixed(2)}M`;
+      } else if (num >= 1e3) {
+        return `$${Math.floor(num / 1e3)}k`;
+      } else {
+        return `$${Math.floor(num)}`;
+      }
     } else {
       return `$${num.toLocaleString()}`;
     }
   } else {
-    return num.toLocaleString(); // plain numbers with comma separator
+    return num.toLocaleString(); // plain numbers with commas
   }
 }
+
 
     fetchData();
   </script>
