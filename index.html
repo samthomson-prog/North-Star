@@ -111,22 +111,26 @@ function renderDashboard(selectedMonth) {
 function formatNumber(num, isCurrency = true, useShort = true) {
   if (isNaN(num)) return '-';
 
+  const absNum = Math.abs(num);
+  const sign = num < 0 ? '-' : '';
+
   if (isCurrency) {
     if (useShort) {
-      if (num >= 1e6) {
-        return `$${(num / 1e6).toFixed(2)}M`; // show two decimals for millions
-      } else if (num >= 1e3) {
-        return `$${Math.round(num / 1e3)}k`;  // no decimals for thousands
+      if (absNum >= 1e6) {
+        return `${sign}$${(absNum / 1e6).toFixed(2)}M`;
+      } else if (absNum >= 1e3) {
+        return `${sign}$${Math.round(absNum / 1e3)}k`;
       } else {
-        return `$${Math.round(num)}`;         // round for small values
+        return `${sign}$${Math.round(absNum)}`;
       }
     } else {
-      return `$${num.toLocaleString()}`;      // full comma-separated format
+      return `${sign}$${absNum.toLocaleString()}`;
     }
   } else {
-    return num.toLocaleString();              // plain numbers (non-currency)
+    return `${sign}${absNum.toLocaleString()}`;
   }
 }
+
 
 
 
