@@ -102,14 +102,17 @@ function renderDashboard(selectedMonth) {
 
 function formatNumber(num, isCurrency = true, useShort = true) {
   if (isNaN(num)) return '-';
-  if (!isCurrency) return num.toLocaleString();
 
-  if (useShort) {
-    return num >= 1e6 ? `$${Math.floor(num / 1e6)}M` :
-           num >= 1e3 ? `$${Math.round(num / 1e3)}k` :
-           `$${Math.round(num)}`;
+  if (isCurrency) {
+    if (useShort) {
+      return num >= 1e6 ? `$${Math.floor(num / 1e6)}M` :
+             num >= 1e3 ? `$${Math.floor(num / 1e3)}k` :
+             `$${Math.floor(num)}`;
+    } else {
+      return `$${num.toLocaleString()}`;
+    }
   } else {
-    return `$${num.toLocaleString()}`;
+    return num.toLocaleString(); // plain numbers with comma separator
   }
 }
 
