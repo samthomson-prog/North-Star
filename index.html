@@ -57,16 +57,18 @@
     const opt = document.createElement('option');
     opt.value = row.Month;
 
-    // Format "31/07/2025" → "July 2025"
+    // Expecting format "dd/mm/yyyy"
     const [day, month, year] = row.Month.split('/');
-    const date = new Date(`${year}-${month}-${day}`);
+    const monthIndex = parseInt(month, 10) - 1; // monthIndex = 0 for Jan, 11 for Dec
+    const date = new Date(year, monthIndex, day);
+
+    // Format to "Month YYYY"
     const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
 
     opt.textContent = formatted;
     monthSelect.appendChild(opt);
   });
 }
-
 function renderDashboard(selectedMonth) {
   dashboard.innerHTML = '';
   const row = parsedData.find(r => r.Month === selectedMonth);
