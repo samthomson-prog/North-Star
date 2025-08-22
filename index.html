@@ -61,41 +61,58 @@
       });
     }
 
-    function renderDashboard(selectedMonth) {
-      dashboard.innerHTML = '';
-      const row = parsedData.find(r => r.Month === selectedMonth);
-      if (!row) return;
+function renderDashboard(selectedMonth) {
+  dashboard.innerHTML = '';
+  const row = parsedData.find(r => r.Month === selectedMonth);
+  if (!row) return;
 
-      metrics.forEach(metric => {
-        const actual = parseFloat(row[`${metric.key}_Actual`] || 0);
-        const target = parseFloat(row[`${metric.key}_Target`] || 0);
-        const variance = actual - target;
-        const percent = target ? (actual / target * 100).toFixed(1) : 0;
+  metrics.forEach(metric => {
+    const actual = parseFloat(row[`${metric.key}_Actual`] || 0);
+    const target = parseFloat(row[`${metric.key}_Target`] || 0);
+    const variance = actual - target;
+    const percent = target ? (actual / target * 100).toFixed(1) : 0;
 
-        const card = document.createElement('div');
-        card.className = "bg-gray-800 rounded-lg p-5 shadow";
+    // Determine if we want $ formatting
+    const isMoney = ['Revenue', 'Capital_Raised'].includes(metric.key);
+    const useShort = true;
 
-        card.innerHTML = `
-          <h2 class="text-xl font-semibold text-pink-400 mb-3">${metric.label}</h2>
-          <div class="text-sm">Actual: <span class="font-bold text-white">${formatNumber(actual)}</span></div>
-          <div class="text-sm">Target: <span class="font-bold text-white">${formatNumber(target)}</span></div>
-          <div class="text-sm">Variance: <span class="font-bold ${variance < 0 ? 'text-red-400' : 'text-green-400'}">${formatNumber(variance)}</span></div>
-          <div class="w-full bg-gray-700 h-2 rounded-full mt-3">
-            <div class="h-2 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
-          </div>
-          <div class="text-xs mt-1 text-right">${percent}%</div>
-        `;
+    const card = document.createElement('div');
+    card.className = "bg-gray-800 rounded-lg p-5 shadow";
 
-        dashboard.appendChild(card);
-      });
-    }
+    card.innerHTML = `
+      <h2 class="text-xl font-semibold text-pink-400 mb-3">${metric.label}</h2>
+      <div class="text-sm">Actual: <span class="font-bold text-white">
+        ${formatNumber(actual, isMoney, useShort)}
+      </span></div>
+      <div class="text-sm">Target: <span class="font-bold text-white">
+        ${formatNumber(target, isMoney, useShort)}
+      </span></div>
+      <div class="text-sm">Variance: <span class="font-bold ${variance < 0 ? 'text-red-400' : 'text-green-400'}">
+        ${formatNumber(variance, isMoney, false)}
+      </span></div>
+      <div class="w-full bg-gray-700 h-2 rounded-full mt-3">
+        <div class="h-2 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
+      </div>
+      <div class="text-xs mt-1 text-right">${percent}%</div>
+    `;
 
-    function formatNumber(num) {
-      if (isNaN(num)) return '-';
-      return num >= 1000000 ? `$${(num / 1e6).toFixed(1)}M` :
-             num >= 1000 ? `$${(num / 1e3).toFixed(1)}k` :
-             `$${num.toFixed(0)}`;
-    }
+    dashboard.appendChild(card);
+  });
+}
+
+  function formatNumber(num, isCurrency = true, useShort = true) {
+  if (isNaN(num)) return '-';
+  if (!isCurrency) return num.toLocaleString();
+
+  // Format as currency
+  if (useShort) {
+    return num >= 1e6 ? `$${Math.round(num / 1e6)}M` :
+           num >= 1e3 ? `$${Math.round(num / 1e3)}k` :
+           `$${Math.round(num)}`;
+  } else {
+    // For full comma-separated currency (like variance)
+    return `$${num.toLocaleString()}`;
+  }
 
     fetchData();
   </script>
