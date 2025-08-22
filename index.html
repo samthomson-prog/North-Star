@@ -111,25 +111,23 @@ function renderDashboard(selectedMonth) {
 function formatNumber(num, isCurrency = true, useShort = true) {
   if (isNaN(num)) return '-';
 
-  const absNum = Math.abs(num);
-  const sign = num < 0 ? '-' : '';
-
   if (isCurrency) {
     if (useShort) {
-      if (absNum >= 1e6) {
-        return `${sign}$${(absNum / 1e6).toFixed(2)}M`;
-      } else if (absNum >= 1e3) {
-        return `${sign}$${Math.round(absNum / 1e3)}k`;
+      if (Math.abs(num) >= 1e6) {
+        return `${num < 0 ? '-' : ''}$${(Math.abs(num) / 1e6).toFixed(2)}M`;
+      } else if (Math.abs(num) >= 1e3) {
+        return `${num < 0 ? '-' : ''}$${Math.round(Math.abs(num) / 1e3)}k`;
       } else {
-        return `${sign}$${Math.round(absNum)}`;
+        return `${num < 0 ? '-' : ''}$${Math.round(Math.abs(num))}`;
       }
     } else {
-      return `${sign}$${absNum.toLocaleString()}`;
+      return `${num < 0 ? '-' : ''}$${Math.abs(num).toLocaleString()}`;
     }
   } else {
-    return `${sign}${absNum.toLocaleString()}`;
+    return `${num < 0 ? '-' : ''}${Math.abs(num).toLocaleString()}`;
   }
 }
+
 
 
 
