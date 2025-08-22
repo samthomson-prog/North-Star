@@ -53,13 +53,19 @@
     }
 
     function populateMonths(data) {
-      data.forEach(row => {
-        const opt = document.createElement('option');
-        opt.value = row.Month;
-        opt.textContent = row.Month;
-        monthSelect.appendChild(opt);
-      });
-    }
+  data.forEach(row => {
+    const opt = document.createElement('option');
+    opt.value = row.Month;
+
+    // Format "31/07/2025" → "July 2025"
+    const [day, month, year] = row.Month.split('/');
+    const date = new Date(`${year}-${month}-${day}`);
+    const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+    opt.textContent = formatted;
+    monthSelect.appendChild(opt);
+  });
+}
 
 function renderDashboard(selectedMonth) {
   dashboard.innerHTML = '';
