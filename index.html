@@ -100,19 +100,18 @@ function renderDashboard(selectedMonth) {
   });
 }
 
-  function formatNumber(num, isCurrency = true, useShort = true) {
+function formatNumber(num, isCurrency = true, useShort = true) {
   if (isNaN(num)) return '-';
   if (!isCurrency) return num.toLocaleString();
 
-  // Format as currency
   if (useShort) {
-    return num >= 1e6 ? `$${Math.round(num / 1e6)}M` :
+    return num >= 1e6 ? `$${Math.floor(num / 1e6)}M` :
            num >= 1e3 ? `$${Math.round(num / 1e3)}k` :
            `$${Math.round(num)}`;
   } else {
-    // For full comma-separated currency (like variance)
     return `$${num.toLocaleString()}`;
   }
+}
 
     fetchData();
   </script>
