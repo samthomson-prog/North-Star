@@ -96,8 +96,8 @@ function renderDashboard(selectedMonth) {
         ${formatNumber(target, isMoney, useShort)}
       </span></div>
       <div class="text-sm">Variance: <span class="font-bold ${variance < 0 ? 'text-red-400' : 'text-green-400'}">
-        ${formatNumber(variance, isMoney, true)}
-      </span></div>
+  ${isMoney ? formatNumber(variance, true, true) : variance.toLocaleString()}
+</span></div>
       <div class="w-full bg-gray-700 h-2 rounded-full mt-3">
         <div class="h-2 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
       </div>
