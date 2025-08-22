@@ -72,48 +72,55 @@ i cant find that in the script, can you please insert the correct lines? here is
     }
 
     function renderDashboard(selectedMonth) {
-      dashboard.innerHTML = '';
-      const row = parsedData.find(r => r.Month === selectedMonth);
-      if (!row) return;
+  dashboard.innerHTML = '';
+  const row = parsedData.find(r => r.Month === selectedMonth);
+  if (!row) return;
 
-      metrics.forEach(metric => {
-        const actual = parseFloat(row[`${metric.key}_Actual`] || 0);
-        const target = parseFloat(row[`${metric.key}_Target`] || 0);
-        const variance = actual - target;
-        const percent = target ? (actual / target * 100).toFixed(1) : 0;
-        const isMoney = ['Revenue', 'Capital_Raised'].includes(metric.key);
-        const useShort = true;
+  // Get June 2026 targets once here
+  const juneTargetRow = parsedData.find(r => r.Month === '30/06/2026');
 
-        const card = document.createElement('div');
-        card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-between h-full";
+  metrics.forEach(metric => {
+    const actual = parseFloat(row[`${metric.key}_Actual`] || 0);
+    const monthlyTarget = parseFloat(row[`${metric.key}_Target`] || 0);
+    const variance = actual - monthlyTarget;
 
-        card.innerHTML = `
-          <div class="flex flex-col items-center justify-center text-center w-full">
-            <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
+    // Use June 2026 target for progress bar
+    const juneTarget = juneTargetRow ? parseFloat(juneTargetRow[`${metric.key}_Target`] || 0) : 0;
+    const percent = juneTarget ? (actual / juneTarget * 100).toFixed(1) : 0;
 
-            <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
-              ${formatNumber(actual, isMoney, useShort)}
-            </span></div>
+    const isMoney = ['Revenue', 'Capital_Raised'].includes(metric.key);
+    const useShort = true;
 
-            <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
-              ${formatNumber(target, isMoney, useShort)}
-            </span></div>
+    const card = document.createElement('div');
+    card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-between h-full";
 
-            <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
-              ${formatNumber(variance, isMoney, true)}
-            </span></div>
+    card.innerHTML = `
+      <div class="flex flex-col items-center justify-center text-center w-full">
+        <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
 
-            <div class="w-full bg-gray-700 h-3 rounded-full mt-4">
-              <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
-            </div>
+        <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
+          ${formatNumber(actual, isMoney, useShort)}
+        </span></div>
 
-            <div class="text-xl mt-4 text-white font-extrabold">${percent}%</div>
-          </div>
-        `;
+        <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
+          ${formatNumber(monthlyTarget, isMoney, useShort)}
+        </span></div>
 
-        dashboard.appendChild(card);
-      });
-    }
+        <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
+          ${formatNumber(variance, isMoney, true)}
+        </span></div>
+
+        <div class="w-full bg-gray-700 h-3 rounded-full mt-4">
+          <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
+        </div>
+
+        <div class="text-xl mt-4 text-white font-extrabold">${percent}% of 30 June 2026</div>
+      </div>
+    `;
+
+    dashboard.appendChild(card);
+  });
+}
 
     function formatNumber(num, isCurrency = true, useShort = true) {
       if (isNaN(num)) return '-';
