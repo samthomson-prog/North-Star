@@ -114,19 +114,20 @@ function formatNumber(num, isCurrency = true, useShort = true) {
   if (isCurrency) {
     if (useShort) {
       if (num >= 1e6) {
-        return `$${(num / 1e6).toFixed(2)}M`;
+        return `$${(num / 1e6).toFixed(2)}M`; // show two decimals for millions
       } else if (num >= 1e3) {
-        return `$${Math.floor(num / 1e3)}k`;
+        return `$${Math.round(num / 1e3)}k`;  // no decimals for thousands
       } else {
-        return `$${Math.floor(num)}`;
+        return `$${Math.round(num)}`;         // round for small values
       }
     } else {
-      return `$${num.toLocaleString()}`;
+      return `$${num.toLocaleString()}`;      // full comma-separated format
     }
   } else {
-    return num.toLocaleString(); // plain numbers with commas
+    return num.toLocaleString();              // plain numbers (non-currency)
   }
 }
+
 
 
     fetchData();
