@@ -109,14 +109,15 @@
     </span></div>
 
     <div class="text-xl mt-4 text-white font-extrabold">${percent}% YTD progress vs full-year target</div>
-
 <div class="w-full bg-gray-700 h-3 rounded-full mt-2">
   <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
 </div>
+</div>
+`;
+
+    dashboard.appendChild(card);
   });
 }
-
-
     function formatNumber(num, isCurrency = true, useShort = true) {
       if (isNaN(num)) return '-';
       const abs = Math.abs(num);
