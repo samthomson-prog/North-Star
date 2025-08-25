@@ -5,6 +5,12 @@
   <title>North Star Metrics - Live Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+  select {
+    text-align: center;
+    text-align-last: center;
+  }
+</style>
 </head>
 <body class="bg-gray-900 text-gray-100 p-7 font-sans min-h-screen">
   <div class="max-w-7xl mx-auto">
@@ -12,7 +18,9 @@
 
     <!-- Centered Dropdown -->
     <div class="mb-8 flex justify-center w-full">
-      <select id="month" class="w-64 p-3 bg-gray-800 rounded text-white text-lg font-semibold shadow-lg text-center"></select>
+      <select id="month" 
+  class="w-64 p-3 bg-gray-800 rounded text-white text-lg font-semibold shadow-lg text-center appearance-none text-center-[last]">
+</select>
 
     <!-- KPI Cards -->
     <div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
