@@ -22,19 +22,20 @@
     <h1 class="text-4xl font-bold text-pink-500 mb-9 text-center">NORTH STAR METRICS</h1>
 
     <!-- Centered Dropdown with Hidden Select and Visible Label -->
-<div class="mb-8 flex justify-center w-full relative">
-  <!-- Fake centered text overlay (visible text) -->
+<div class="mb-8 flex justify-center w-full relative h-12">
+  <!-- Visible Month Label -->
   <div id="monthLabel"
-       class="absolute top-0 left-1/2 transform -translate-x-1/2 text-2xl font-semibold text-white h-full flex items-center justify-center pointer-events-none z-10">
+       class="absolute inset-0 flex items-center justify-center text-2xl font-semibold text-white pointer-events-none z-10">
     Loading...
   </div>
 
-  <!-- Functional select dropdown, styled to hide text and caret -->
+  <!-- Hidden Functional Dropdown -->
   <select id="month"
-          class="w-64 p-3 bg-gray-800 rounded text-transparent appearance-none caret-transparent z-20 relative"
+          class="absolute inset-0 w-64 opacity-0 z-20"
           onchange="document.getElementById('monthLabel').textContent = this.options[this.selectedIndex].textContent;">
   </select>
 </div>
+
 
     <!-- KPI Cards -->
     <div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
@@ -77,21 +78,22 @@
     }
 
     function populateMonths(data) {
-      data.forEach(row => {
-        const opt = document.createElement('option');
-        opt.value = row.Month;
+  data.forEach(row => {
+    const opt = document.createElement('option');
+    opt.value = row.Month;
 
-        const [day, month, year] = row.Month.split('/');
-        const date = new Date(year, month - 1, day);
-        const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+    const [day, month, year] = row.Month.split('/');
+    const date = new Date(year, month - 1, day);
+    const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-        opt.textContent = formatted;
-        monthSelect.appendChild(opt);
-      });
+    opt.textContent = formatted;
+    monthSelect.appendChild(opt);
+  });
 
-      // Set visible label text
-      document.getElementById('monthLabel').textContent = monthSelect.options[0]?.textContent || 'Select Month';
-    }
+  // ✅ Set the visible label to match the first available month
+  document.getElementById('monthLabel').textContent =
+    monthSelect.options[0]?.textContent || 'Select Month';
+}
 
     function renderDashboard(selectedMonth) {
       dashboard.innerHTML = '';
