@@ -21,20 +21,20 @@
   <div class="max-w-7xl mx-auto">
     <h1 class="text-4xl font-bold text-pink-500 mb-9 text-center">NORTH STAR METRICS</h1>
 
-    <!-- Centered Dropdown -->
-    <div class="mb-8 flex justify-center w-full relative">
-      <!-- Visible overlay label -->
-      <div id="monthLabel"
-           class="absolute top-0 left-1/2 transform -translate-x-1/2 text-xl font-semibold text-white h-full flex items-center justify-center pointer-events-none z-10">
-        Loading...
-      </div>
+    <!-- Centered Dropdown with Hidden Select and Visible Label -->
+<div class="mb-8 flex justify-center w-full relative">
+  <!-- Fake centered text overlay (visible text) -->
+  <div id="monthLabel"
+       class="absolute top-0 left-1/2 transform -translate-x-1/2 text-2xl font-semibold text-white h-full flex items-center justify-center pointer-events-none z-10">
+    Loading...
+  </div>
 
-      <!-- Hidden functional select -->
-      <select id="month"
-              class="w-64 p-3 bg-gray-800 rounded z-20 relative"
-              onchange="document.getElementById('monthLabel').textContent = this.options[this.selectedIndex].textContent;">
-      </select>
-    </div>
+  <!-- Functional select dropdown, styled to hide text and caret -->
+  <select id="month"
+          class="w-64 p-3 bg-gray-800 rounded text-transparent appearance-none caret-transparent z-20 relative"
+          onchange="document.getElementById('monthLabel').textContent = this.options[this.selectedIndex].textContent;">
+  </select>
+</div>
 
     <!-- KPI Cards -->
     <div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
