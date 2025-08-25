@@ -15,21 +15,20 @@
 <body class="bg-gray-900 text-gray-100 p-7 font-sans min-h-screen">
   <div class="max-w-7xl mx-auto">
     <h1 class="text-4xl font-bold text-pink-500 mb-9 text-center">NORTH STAR METRICS</h1>
-
 <!-- Centered Dropdown -->
 <div class="mb-8 flex justify-center w-full relative">
-  <!-- Fake centered label -->
-  <div id="dummyText" class="absolute top-0 left-1/2 transform -translate-x-1/2 text-lg font-semibold text-white h-full flex items-center justify-center pointer-events-none">
+  <!-- Fake centered text overlay -->
+  <div id="monthLabel"
+       class="absolute top-0 left-1/2 transform -translate-x-1/2 text-lg font-semibold text-white h-full flex items-center justify-center pointer-events-none z-10">
     Loading...
   </div>
 
-  <!-- Hidden dropdown underneath -->
+  <!-- Hidden but functional select dropdown -->
   <select id="month"
-    class="w-64 p-3 bg-gray-800 rounded text-transparent appearance-none caret-transparent z-10 relative"
-    onchange="document.getElementById('dummyText').textContent = this.options[this.selectedIndex].textContent;">
+          class="w-64 p-3 bg-gray-800 rounded text-transparent appearance-none caret-transparent z-20 relative"
+          onchange="document.getElementById('monthLabel').textContent = this.options[this.selectedIndex].textContent;">
   </select>
 </div>
-
   
   <select id="month" 
     class="w-64 p-3 bg-gray-800 rounded text-white text-lg font-semibold shadow-lg text-transparent caret-transparent"
@@ -78,18 +77,21 @@
     }
 
     function populateMonths(data) {
-      data.forEach(row => {
-        const opt = document.createElement('option');
-        opt.value = row.Month;
+  data.forEach(row => {
+    const opt = document.createElement('option');
+    opt.value = row.Month;
 
-        const [day, month, year] = row.Month.split('/');
-        const date = new Date(year, month - 1, day);
-        const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+    const [day, month, year] = row.Month.split('/');
+    const date = new Date(year, month - 1, day);
+    const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-        opt.textContent = formatted;
-        monthSelect.appendChild(opt);
-      });
-    }
+    opt.textContent = formatted;
+    monthSelect.appendChild(opt);
+  });
+
+  // ✅ Set the visible label to match the first available month
+  document.getElementById('monthLabel').textContent = monthSelect.options[0]?.textContent || 'Select Month';
+}
 
     function renderDashboard(selectedMonth) {
   dashboard.innerHTML = '';
