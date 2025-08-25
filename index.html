@@ -108,13 +108,18 @@
     </span></div>
 
     <div class="flex justify-between items-center text-sm mt-4 text-white w-full">
-  <span class="text-left">YTD progress vs full-year target</span>
-  <span class="text-right">${percent}%</span>
-</div>
+      <span class="text-left">YTD progress vs full-year target</span>
+      <span class="text-right">${percent}%</span>
+    </div>
 
-<div class="w-full bg-gray-700 h-3 rounded-full mt-1">
-  <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
-</div>
+    <div class="w-full bg-gray-700 h-3 rounded-full mt-1">
+      <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
+    </div>
+
+    <div class="text-sm text-white text-left w-full mt-2">
+      ${formatNumber(actual, isMoney, useShort)} of ${formatNumber(juneTarget, isMoney, useShort)}
+    </div>
+  </div>
 `;//
 
     dashboard.appendChild(card);
