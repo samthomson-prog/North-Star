@@ -74,7 +74,6 @@
   const row = parsedData.find(r => r.Month === selectedMonth);
   if (!row) return;
 
-  // Get June 2026 targets once here
   const juneTargetRow = parsedData.find(r => r.Month === '30/06/2026');
 
   metrics.forEach(metric => {
@@ -82,7 +81,6 @@
     const monthlyTarget = parseFloat(row[`${metric.key}_Target`] || 0);
     const variance = actual - monthlyTarget;
 
-    // Use June 2026 target for progress bar
     const juneTarget = juneTargetRow ? parseFloat(juneTargetRow[`${metric.key}_Target`] || 0) : 0;
     const percent = juneTarget ? (actual / juneTarget * 100).toFixed(1) : 0;
 
@@ -93,27 +91,28 @@
     card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-between h-full";
 
     card.innerHTML = `
-  <div class="flex flex-col items-center justify-center text-center w-full">
-    <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
+      <div class="flex flex-col items-center justify-center text-center w-full">
+        <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
 
-    <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
-      ${formatNumber(actual, isMoney, useShort)}
-    </span></div>
+        <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
+          ${formatNumber(actual, isMoney, useShort)}
+        </span></div>
 
-    <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
-      ${formatNumber(monthlyTarget, isMoney, useShort)}
-    </span></div>
+        <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
+          ${formatNumber(monthlyTarget, isMoney, useShort)}
+        </span></div>
 
-    <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
-      ${formatNumber(variance, isMoney, true)}
-    </span></div>
-    <div class="text-xl mt-4 text-white font-extrabold">YTD progress vs full-year target</div>
+        <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
+          ${formatNumber(variance, isMoney, true)}
+        </span></div>
 
-    <div class="w-full bg-gray-700 h-3 rounded-full mt-2">
-      <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
-    </div>
-  </div>
-`;//
+        <div class="text-xl mt-4 text-white font-extrabold">YTD progress vs full-year target</div>
+
+        <div class="w-full bg-gray-700 h-3 rounded-full mt-2">
+          <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
+        </div>
+      </div>
+    `;
 
     dashboard.appendChild(card);
   });
