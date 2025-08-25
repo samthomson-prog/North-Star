@@ -74,7 +74,6 @@
   const row = parsedData.find(r => r.Month === selectedMonth);
   if (!row) return;
 
-  // Get June 2026 targets
   const juneTargetRow = parsedData.find(r => r.Month === '30/06/2026');
 
   metrics.forEach(metric => {
@@ -92,39 +91,40 @@
     card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-between h-full";
 
     card.innerHTML = `
-  <div class="flex flex-col items-center justify-center text-center w-full">
-    <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
+      <div class="flex flex-col items-center justify-center text-center w-full">
+        <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
 
-    <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
-      ${formatNumber(actual, isMoney, useShort)}
-    </span></div>
+        <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
+          ${formatNumber(actual, isMoney, useShort)}
+        </span></div>
 
-    <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
-      ${formatNumber(monthlyTarget, isMoney, useShort)}
-    </span></div>
+        <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
+          ${formatNumber(monthlyTarget, isMoney, useShort)}
+        </span></div>
 
-    <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
-      ${formatNumber(variance, isMoney, true)}
-    </span></div>
+        <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
+          ${formatNumber(variance, isMoney, true)}
+        </span></div>
 
-    <div class="flex justify-between items-center text-sm mt-4 text-white w-full">
-      <span class="text-left">YTD progress vs full-year target</span>
-      <span class="text-right">${percent}%</span>
-    </div>
+        <div class="flex justify-between items-center text-sm mt-4 text-white w-full">
+          <span class="text-left">YTD progress vs full-year target</span>
+          <span class="text-right">${percent}%</span>
+        </div>
 
-    <div class="w-full bg-gray-700 h-3 rounded-full mt-1">
-      <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
-    </div>
+        <div class="w-full bg-gray-700 h-3 rounded-full mt-1">
+          <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
+        </div>
 
-    <div class="text-sm text-white text-left w-full mt-2">
-      ${formatNumber(actual, isMoney, useShort)} of ${formatNumber(juneTarget, isMoney, useShort)}
-    </div>
-  </div>
-`;
+        <div class="text-sm text-white text-left w-full mt-2">
+          ${formatNumber(actual, isMoney, useShort)} of ${formatNumber(juneTarget, isMoney, useShort)}
+        </div>
+      </div>
+    `;
 
     dashboard.appendChild(card);
-  }); //
-} //
+  });
+}
+
 
     function formatNumber(num, isCurrency = true, useShort = true) {
       if (isNaN(num)) return '-';
