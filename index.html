@@ -82,7 +82,7 @@
     const variance = actual - monthlyTarget;
 
     const juneTarget = juneTargetRow ? parseFloat(juneTargetRow[`${metric.key}_Target`] || 0) : 0;
-    const percent = juneTarget ? (actual / juneTarget * 100).toFixed(1) : 0;
+    const percent = juneTarget ? Math.round((actual / juneTarget) * 100) : 0;
 
     const isMoney = ['Revenue', 'Capital_Raised'].includes(metric.key);
     const useShort = true;
