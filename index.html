@@ -92,28 +92,28 @@
     card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-between h-full";
 
     card.innerHTML = `
-      <div class="flex flex-col items-center justify-center text-center w-full">
-        <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
+  <div class="flex flex-col items-center justify-center text-center w-full">
+    <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
 
-        <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
-          ${formatNumber(actual, isMoney, useShort)}
-        </span></div>
+    <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
+      ${formatNumber(actual, isMoney, useShort)}
+    </span></div>
 
-        <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
-          ${formatNumber(monthlyTarget, isMoney, useShort)}
-        </span></div>
+    <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
+      ${formatNumber(monthlyTarget, isMoney, useShort)}
+    </span></div>
 
-        <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
-          ${formatNumber(variance, isMoney, true)}
-        </span></div>
+    <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
+      ${formatNumber(variance, isMoney, true)}
+    </span></div>
 
-        <div class="text-sm mt-4 text-white">${percent}% YTD progress vs full-year target</div>
+    <div class="text-sm mt-4 text-white text-left w-full">YTD progress vs full-year target</div>
 
-        <div class="w-full bg-gray-700 h-3 rounded-full mt-2">
-          <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
-        </div>
-      </div>
-    `;
+    <div class="w-full bg-gray-700 h-3 rounded-full mt-2">
+      <div class="h-3 rounded-full bg-pink-500" style="width: ${Math.min(percent, 100)}%"></div>
+    </div>
+  </div>
+`;
 
     dashboard.appendChild(card);
   }); //
