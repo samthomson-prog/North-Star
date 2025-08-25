@@ -94,17 +94,17 @@
       <div class="flex flex-col items-center justify-center text-center w-full">
         <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
 
-        <div class="text-xl">Actual: <span class="font-extrabold text-white text-2xl">
-          ${formatNumber(actual, isMoney, useShort)}
-        </span></div>
+        <div class="text-xl">Actual YTD: <span class="font-extrabold text-white text-2xl">
+  ${formatNumber(actual, isMoney, useShort)}
+</span></div>
 
-        <div class="text-xl">Target: <span class="font-extrabold text-white text-2xl">
-          ${formatNumber(monthlyTarget, isMoney, useShort)}
-        </span></div>
+<div class="text-xl">Target YTD: <span class="font-extrabold text-white text-2xl">
+  ${formatNumber(monthlyTarget, isMoney, useShort)}
+</span></div>
 
-        <div class="text-xl">Variance: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
-          ${formatNumber(variance, isMoney, true)}
-        </span></div>
+<div class="text-xl">Variance YTD: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : 'text-green-400'} text-2xl">
+  ${formatNumber(variance, isMoney, true)}
+</span></div>
 
         <div class="flex justify-between items-center text-sm mt-4 text-white w-full">
           <span class="text-left">YTD progress vs full-year target</span>
