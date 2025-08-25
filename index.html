@@ -127,22 +127,31 @@
 
 
     function formatNumber(num, isCurrency = true, useShort = true) {
-      if (isNaN(num)) return '-';
-      const abs = Math.abs(num);
-      const sign = num < 0 ? '-' : '';
+  if (isNaN(num)) return '-';
+  const abs = Math.abs(num);
+  const sign = num < 0 ? '-' : '';
 
-      if (isCurrency) {
-        if (useShort) {
-          if (abs >= 1e6) return `${sign}$${(abs / 1e6).toFixed(2)}M`;
-          if (abs >= 1e3) return `${sign}$${Math.round(abs / 1e3)}k`;
-          return `${sign}$${Math.round(abs)}`;
-        } else {
-          return `${sign}$${abs.toLocaleString()}`;
-        }
-      } else {
-        return `${sign}${abs.toLocaleString()}`;
+  function trimTrailingZeros(value) {
+    return value.includes('.') ? value.replace(/\.?0+$/, '') : value;
+  }
+
+  if (isCurrency) {
+    if (useShort) {
+      if (abs >= 1e6) {
+        const millions = (abs / 1e6).toFixed(2);
+        return `${sign}$${trimTrailingZeros(millions)}M`;
       }
+      if (abs >= 1e3) {
+        return `${sign}$${Math.round(abs / 1e3)}k`;
+      }
+      return `${sign}$${Math.round(abs)}`;
+    } else {
+      return `${sign}$${abs.toLocaleString()}`;
     }
+  } else {
+    return `${sign}${abs.toLocaleString()}`;
+  }
+}
 
     fetchData();
   </script>
