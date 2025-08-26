@@ -5,19 +5,6 @@
   <title>North Star Metrics - Live Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    select {
-      text-align: center;
-      text-align-last: center;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      background-position: right 0.75rem center;
-      background-repeat: no-repeat;
-      background-size: 1rem;
-      background-color: transparent;
-    }
-  </style>
 </head>
 <body class="bg-gray-900 text-gray-100 p-7 font-sans min-h-screen">
   <div class="max-w-7xl mx-auto">
@@ -32,15 +19,10 @@
 
     <!-- KPI Cards -->
     <div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-    <!-- Optional fallback message -->
-    <div id="error" class="text-center text-red-400 text-lg mt-10 hidden">
-      Unable to load dashboard data. Please check your Google Sheet or try again later.
-    </div>
   </div>
 
   <script>
-    const sheetUrl ='https://script.google.com/macros/s/AKfycbwxLz28shIfHgWTUYsD80MOCIr7kXqyJ4vjJ002U6c8MRqa1laHOESlt5vzwPG4QQRV/exec';
+    const sheetUrl = 'https://script.google.com/macros/s/AKfycbyoGS0nPnyc0RBLCv5rkEc7t4cOmohIX2SKXUf9T_kwV4VltJWLmU2MuGHzPI37IQmu/exec';
 
     const metrics = [
       { key: 'Revenue', label: 'Revenue' },
@@ -53,43 +35,24 @@
 
     const monthSelect = document.getElementById('month');
     const dashboard = document.getElementById('dashboard');
-    const errorMsg = document.getElementById('error');
     let parsedData = [];
 
     function fetchData() {
       fetch(sheetUrl)
-        .then(res => res.text())
-        .then(csv => {
-          const rows = csv.trim().split('\n').map(row => row.split(','));
-          const headers = rows[0];
-          parsedData = rows.slice(1).map(row => {
-            const obj = {};
-            headers.forEach((header, i) => {
-              obj[header.trim()] = row[i] ? row[i].trim() : '';
-            });
-            return obj;
-          });
-
-          console.log('✅ Parsed data:', parsedData);
-
-          if (!parsedData.length || !parsedData[0].Month) {
-            errorMsg.classList.remove('hidden');
-            console.warn("⚠️ No valid month data found in the spreadsheet.");
-            return;
-          }
-
+        .then(res => res.json())
+        .then(data => {
+          parsedData = data;
           populateMonths(parsedData);
           monthSelect.addEventListener('change', () => renderDashboard(monthSelect.value));
-          renderDashboard(parsedData[0].Month);
+          renderDashboard(parsedData[0]?.Month);
         })
         .catch(err => {
-          console.error("❌ Failed to fetch or parse CSV:", err);
-          errorMsg.classList.remove('hidden');
+          console.error('Failed to fetch or parse JSON', err);
+          alert('Unable to load dashboard data. Please check your Google Sheet or Apps Script.');
         });
     }
 
     function populateMonths(data) {
-      monthSelect.innerHTML = ''; // Clear existing
       data.forEach(row => {
         const opt = document.createElement('option');
         opt.value = row.Month;
@@ -104,13 +67,9 @@
     }
 
     function renderDashboard(selectedMonth) {
-      console.log('📅 Rendering dashboard for:', selectedMonth);
       dashboard.innerHTML = '';
       const row = parsedData.find(r => r.Month === selectedMonth);
-      if (!row) {
-        console.warn('⚠️ No row found for selected month:', selectedMonth);
-        return;
-      }
+      if (!row) return;
 
       const juneTargetRow = parsedData.find(r => r.Month === '30/06/2026');
 
