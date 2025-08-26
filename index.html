@@ -23,7 +23,7 @@
   <div class="max-w-7xl mx-auto">
     <h1 class="text-4xl font-bold text-pink-500 mb-9 text-center">NORTH STAR METRICS</h1>
 
-    <!-- Dropdown styled to look centered and arrowless -->
+    <!-- Centered Dropdown -->
     <div class="mb-8 flex justify-center w-full">
       <select id="month"
               class="w-64 p-3 bg-gray-800 rounded text-white text-xl font-semibold shadow-lg text-center appearance-none">
@@ -32,6 +32,11 @@
 
     <!-- KPI Cards -->
     <div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+    <!-- Optional fallback message -->
+    <div id="error" class="text-center text-red-400 text-lg mt-10 hidden">
+      Unable to load dashboard data. Please check your Google Sheet or try again later.
+    </div>
   </div>
 
   <script>
@@ -48,6 +53,7 @@
 
     const monthSelect = document.getElementById('month');
     const dashboard = document.getElementById('dashboard');
+    const errorMsg = document.getElementById('error');
     let parsedData = [];
 
     function fetchData() {
@@ -64,13 +70,26 @@
             return obj;
           });
 
+          console.log('✅ Parsed data:', parsedData);
+
+          if (!parsedData.length || !parsedData[0].Month) {
+            errorMsg.classList.remove('hidden');
+            console.warn("⚠️ No valid month data found in the spreadsheet.");
+            return;
+          }
+
           populateMonths(parsedData);
           monthSelect.addEventListener('change', () => renderDashboard(monthSelect.value));
-          renderDashboard(parsedData[0]?.Month);
+          renderDashboard(parsedData[0].Month);
+        })
+        .catch(err => {
+          console.error("❌ Failed to fetch or parse CSV:", err);
+          errorMsg.classList.remove('hidden');
         });
     }
 
     function populateMonths(data) {
+      monthSelect.innerHTML = ''; // Clear existing
       data.forEach(row => {
         const opt = document.createElement('option');
         opt.value = row.Month;
@@ -85,9 +104,13 @@
     }
 
     function renderDashboard(selectedMonth) {
+      console.log('📅 Rendering dashboard for:', selectedMonth);
       dashboard.innerHTML = '';
       const row = parsedData.find(r => r.Month === selectedMonth);
-      if (!row) return;
+      if (!row) {
+        console.warn('⚠️ No row found for selected month:', selectedMonth);
+        return;
+      }
 
       const juneTargetRow = parsedData.find(r => r.Month === '30/06/2026');
 
