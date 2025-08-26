@@ -75,7 +75,14 @@
       const row = parsedData.find(r => r.Month === selectedMonth);
       if (!row) return;
 
-      const juneTargetRow = parsedData.find(r => r.Month === '30/06/2026');
+      const juneTargetRow = parsedData.find(r => {
+  const date = new Date(r.Month);
+  return (
+    date.getDate() === 30 &&
+    date.getMonth() === 5 && // Months are 0-based (5 = June)
+    date.getFullYear() === 2026
+  );
+});
 
       metrics.forEach(metric => {
         const actual = parseFloat(row[`${metric.key}_Actual`] || 0);
