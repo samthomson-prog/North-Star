@@ -53,22 +53,22 @@
     }
 
     function populateMonths(data) {
-      data.forEach(row => {
-        const opt = document.createElement('option');
-        opt.value = row.Month;
+  data.forEach(row => {
+    if (!row.Month) return; // skip if Month is missing
 
-       const date = new Date(row.Month);
-if (!isNaN(date)) {
-  const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-  opt.textContent = formatted;
-} else {
-  opt.textContent = row.Month; // fallback if date fails
-}
+    const opt = document.createElement('option');
+    opt.value = row.Month;
 
-        opt.textContent = formatted;
-        monthSelect.appendChild(opt);
-      });
+    const date = new Date(row.Month);
+    if (!isNaN(date)) {
+      opt.textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+    } else {
+      opt.textContent = row.Month; // fallback
     }
+
+    monthSelect.appendChild(opt);
+  });
+}
 
     function renderDashboard(selectedMonth) {
       dashboard.innerHTML = '';
