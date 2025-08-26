@@ -14,6 +14,7 @@
     <div class="mb-8 flex justify-center w-full">
       <select id="month"
               class="w-64 p-3 bg-gray-800 rounded text-white text-xl font-semibold shadow-lg text-center appearance-none">
+        <option disabled selected>Loading...</option>
       </select>
     </div>
 
@@ -37,28 +38,34 @@
     const dashboard = document.getElementById('dashboard');
     let parsedData = [];
 
-    function fetchData() {
-      fetch(sheetUrl)
-        .then(res => res.json())
-        .then(data => {
-          parsedData = data;
-          populateMonths(parsedData);
-          monthSelect.addEventListener('change', () => renderDashboard(monthSelect.value));
-          renderDashboard(parsedData[0]?.Month);
-        })
-        .catch(err => {
-          console.error('Failed to fetch or parse JSON', err);
-          alert('Unable to load dashboard data. Please check your Google Sheet or Apps Script.');
-        });
+    async function fetchData() {
+      try {
+        const response = await fetch(sheetUrl);
+        const data = await response.json();
+        parsedData = data;
+
+        if (!Array.isArray(parsedData) || parsedData.length === 0) {
+          throw new Error("No data found");
+        }
+
+        populateMonths(parsedData);
+        monthSelect.addEventListener('change', () => renderDashboard(monthSelect.value));
+        renderDashboard(parsedData[0].Month); // default to latest
+        monthSelect.value = parsedData[0].Month;
+      } catch (error) {
+        console.error("Fetch error:", error);
+        alert("Unable to load dashboard data. Please check your Google Sheet or Apps Script.");
+      }
     }
 
     function populateMonths(data) {
+      monthSelect.innerHTML = ''; // Clear existing
       data.forEach(row => {
         const opt = document.createElement('option');
         opt.value = row.Month;
 
         const [day, month, year] = row.Month.split('/');
-        const date = new Date(year, month - 1, day);
+        const date = new Date(`${year}-${month}-${day}`);
         const formatted = date.toLocaleString('default', { month: 'long', year: 'numeric' });
 
         opt.textContent = formatted;
@@ -77,12 +84,10 @@
         const actual = parseFloat(row[`${metric.key}_Actual`] || 0);
         const monthlyTarget = parseFloat(row[`${metric.key}_Target`] || 0);
         const variance = actual - monthlyTarget;
-
         const juneTarget = juneTargetRow ? parseFloat(juneTargetRow[`${metric.key}_Target`] || 0) : 0;
         const percent = juneTarget ? Math.round((actual / juneTarget) * 100) : 0;
 
         const isMoney = ['Revenue', 'Capital_Raised'].includes(metric.key);
-        const useShort = true;
 
         const card = document.createElement('div');
         card.className = "bg-gray-800 rounded-lg p-5 shadow text-center flex flex-col justify-between h-full";
@@ -92,15 +97,15 @@
             <h2 class="text-3xl font-extrabold text-pink-400 mb-4">${metric.label}</h2>
 
             <div class="text-xl">Actual YTD: <span class="font-extrabold text-white text-2xl">
-              ${formatNumber(actual, isMoney, useShort)}
+              ${formatNumber(actual, isMoney)}
             </span></div>
 
             <div class="text-xl">Target YTD: <span class="font-extrabold text-white text-2xl">
-              ${formatNumber(monthlyTarget, isMoney, useShort)}
+              ${formatNumber(monthlyTarget, isMoney)}
             </span></div>
 
             <div class="text-xl">Variance YTD: <span class="font-extrabold ${variance < 0 ? 'text-red-400' : variance > 0 ? 'text-green-400' : 'text-white'} text-2xl">
-              ${formatNumber(variance, isMoney, true)}
+              ${formatNumber(variance, isMoney)}
             </span></div>
 
             <div class="flex justify-between items-center text-sm mt-4 text-white w-full">
@@ -113,7 +118,7 @@
             </div>
 
             <div class="text-sm text-white text-left w-full mt-2">
-              ${formatNumber(actual, isMoney, useShort)} of ${formatNumber(juneTarget, isMoney, useShort)}
+              ${formatNumber(actual, isMoney)} of ${formatNumber(juneTarget, isMoney)}
             </div>
           </div>
         `;
@@ -122,31 +127,21 @@
       });
     }
 
-    function formatNumber(num, isCurrency = true, useShort = true) {
+    function formatNumber(num, isCurrency = true) {
       if (isNaN(num)) return '-';
       const abs = Math.abs(num);
       const sign = num < 0 ? '-' : '';
 
-      function trimTrailingZeros(value) {
-        return value.includes('.') ? value.replace(/\.?0+$/, '') : value;
+      function trimTrailingZeros(val) {
+        return val.includes('.') ? val.replace(/\.?0+$/, '') : val;
       }
 
       if (isCurrency) {
-        if (useShort) {
-          if (abs >= 1e6) {
-            const millions = (abs / 1e6).toFixed(2);
-            return `${sign}$${trimTrailingZeros(millions)}M`;
-          }
-          if (abs >= 1e3) {
-            return `${sign}$${Math.round(abs / 1e3)}k`;
-          }
-          return `${sign}$${Math.round(abs)}`;
-        } else {
-          return `${sign}$${abs.toLocaleString()}`;
-        }
-      } else {
-        return `${sign}${abs.toLocaleString()}`;
+        if (abs >= 1e6) return `${sign}$${trimTrailingZeros((abs / 1e6).toFixed(2))}M`;
+        if (abs >= 1e3) return `${sign}$${Math.round(abs / 1e3)}k`;
+        return `${sign}$${Math.round(abs)}`;
       }
+      return `${sign}${abs}`;
     }
 
     fetchData();
